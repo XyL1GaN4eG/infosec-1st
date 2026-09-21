@@ -1,0 +1,65 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "**" ]
+
+jobs:
+  test-and-security-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Run tests
+        run: mvn clean test
+
+      - name: Run SpotBugs (Static Code Analysis)
+        run: |
+          mvn -B clean compile spotbugs:spotbugs
+        continue-on-error: true
+
+      - name: Upload SpotBugs report
+        uses: actions/upload-artifact@v4
+        with:
+          name: spotbugs-report
+          path: target/spotbugsXml.xml
+
+      - name: Run Dependency Check (SCA)
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: |
+          mkdir -p ./dependency-check-data
+          mvn -B org.owasp:dependency-check-maven:check \
+            -Dnvd.apiKey=$NVD_API_KEY \
+            -DdataDirectory=./dependency-check-data \
+            -Dformat=HTML \
+            -DfailBuildOnCVSS=0 \
+            -DsuppressionFile=dependency-check-suppressions.xml \
+            -Dossindex.skip=true
+        continue-on-error: false
+
+      - name: Report of Dependency Check
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-check-report
+          path: target/dependency-check-report.html
+
+      - name: Build application
+        run: mvn clean package -DskipTests
