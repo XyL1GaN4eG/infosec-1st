@@ -27,11 +27,25 @@ jobs:
           name: spotbugs-report
           path: target/spotbugsXml.xml
           if-no-files-found: warn
+      - name: Restore Dependency-Check database
+        if: ${{ !cancelled() }}
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/dependency-check-data
+          key: ${{ runner.os }}-dependency-check-${{ github.run_id }}
+          restore-keys: ${{ runner.os }}-dependency-check-
       - name: Run OWASP Dependency-Check (SCA)
+        id: sca
         if: ${{ !cancelled() }}
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
-        run: mvn -B org.owasp:dependency-check-maven:check -Dnvd.apiKey="$NVD_API_KEY" -Dformat=HTML -DfailBuildOnCVSS=7
+        run: mvn -B org.owasp:dependency-check-maven:check -DnvdApiKeyEnvironmentVariable=NVD_API_KEY -DdataDirectory="${{ runner.temp }}/dependency-check-data" -Dformat=HTML -DfailBuildOnCVSS=7
+      - name: Cache Dependency-Check database
+        if: ${{ !cancelled() && steps.sca.outcome != 'skipped' }}
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ runner.temp }}/dependency-check-data
+          key: ${{ runner.os }}-dependency-check-${{ github.run_id }}
       - name: Upload Dependency-Check report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
