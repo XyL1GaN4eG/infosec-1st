@@ -68,4 +68,4 @@ mvn -B org.owasp:dependency-check-maven:check -Dformat=HTML -DfailBuildOnCVSS=7
 
 Dependency-Check загружает базу NVD; первая загрузка может занять продолжительное время. Workflow кэширует базу для последующих запусков. Для ускорения добавьте ключ NVD в GitHub Actions secret `NVD_API_KEY`. Без ключа проверка также работает с ограничениями NVD API. Просмотрите HTML-отчёт `target/dependency-check-report.html` и XML-отчёт `target/spotbugsXml.xml`; обнаруженные уязвимости необходимо устранить или обоснованно обработать, а не скрывать без проверки.
 
-Раздел [Actions](https://github.com/XyL1GaN4eG/infosec-1st/actions): после отправки изменений откройте успешный запуск, скачайте оба отчёта и добавьте скриншоты результатов в README и отчёт по лабораторной, а в отчёт также добавьте ссылку на запуск. До такого запуска подтверждённых скриншотов и ссылки на успешный pipeline нет.
+Успешный запуск pipeline: [run 42666800103](https://github.com/XyL1GaN4eG/infosec-1st/actions/runs/42666800103). В нём пройдены тесты, SpotBugs/FindSecBugs и OWASP Dependency-Check; отчёты доступны в артефактах запуска `spotbugs-report` и `dependency-check-report`.
