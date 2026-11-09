@@ -126,9 +126,6 @@
                 <version>12.1.6</version>
                 <configuration>
                     <failBuildOnCVSS>7</failBuildOnCVSS>
-                    <suppressionFiles>
-                        <suppressionFile>dependency-check-suppressions.xml</suppressionFile>
-                    </suppressionFiles>
                 </configuration>
             </plugin>
         </plugins>
