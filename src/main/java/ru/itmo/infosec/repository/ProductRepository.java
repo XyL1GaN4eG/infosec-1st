@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import ru.itmo.infosec.entity.ProductModel;
 
 @Repository
-public interface ProductRepository extends JpaRepository<ProductModel, String> {
+public interface ProductRepository extends JpaRepository<ProductModel, Long> {
 }

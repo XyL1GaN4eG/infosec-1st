@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import ru.itmo.infosec.exceptions.IncorrectPasswordException;
 import ru.itmo.infosec.exceptions.UserAlreadyExistsException;
 import ru.itmo.infosec.exceptions.UserNotFoundException;
@@ -23,7 +24,12 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler(IncorrectPasswordException.class)
     public ResponseEntity<String> handleIncorrectPasswordException(IncorrectPasswordException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid login or password");
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<String> handleValidationException(MethodArgumentNotValidException ex) {
+        return ResponseEntity.badRequest().body("Invalid request");
     }
 
     @ExceptionHandler(Throwable.class)

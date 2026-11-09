@@ -44,7 +44,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String token = authHeader.replace("Bearer ", "");
+        String token = authHeader.substring("Bearer ".length());
 
         if (!isHeaderValid(token)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
