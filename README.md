@@ -68,4 +68,14 @@ mvn -B org.owasp:dependency-check-maven:check -Dformat=HTML -DfailBuildOnCVSS=7
 
 Dependency-Check загружает базу NVD; первая загрузка может занять продолжительное время. Workflow кэширует базу для последующих запусков. Для ускорения добавьте ключ NVD в GitHub Actions secret `NVD_API_KEY`. Без ключа проверка также работает с ограничениями NVD API. Просмотрите HTML-отчёт `target/dependency-check-report.html` и XML-отчёт `target/spotbugsXml.xml`; обнаруженные уязвимости необходимо устранить или обоснованно обработать, а не скрывать без проверки.
 
-Успешный запуск pipeline: [run 42666800103](https://github.com/XyL1GaN4eG/infosec-1st/actions/runs/42666800103). В нём пройдены тесты, SpotBugs/FindSecBugs и OWASP Dependency-Check; отчёты доступны в артефактах запуска `spotbugs-report` и `dependency-check-report`.
+Последний успешный запуск pipeline: [run 42668544370](https://github.com/XyL1GaN4eG/infosec-1st/actions/runs/42668544370). В нём пройдены тесты, SpotBugs/FindSecBugs и OWASP Dependency-Check; исходные отчёты доступны в артефактах запуска `spotbugs-report` и `dependency-check-report`.
+
+### Скриншоты отчётов из Actions
+
+SpotBugs с FindSecBugs проверил 19 классов проекта и не зарегистрировал замечаний. Анализатор также сообщил о 6 отсутствующих зависимых классах, поэтому результат отражает только классы, которые удалось проанализировать.
+
+![Отчёт SpotBugs и FindSecBugs из успешного запуска GitHub Actions](output/images/spotbugs-report.png)
+
+OWASP Dependency-Check проанализировал 87 зависимостей (52 уникальные); уязвимых зависимостей и найденных уязвимостей — 0.
+
+![Отчёт OWASP Dependency-Check из успешного запуска GitHub Actions](output/images/dependency-check-report.png)
